@@ -6,6 +6,14 @@ import math
 
 # Initialize Pygame
 pygame.init()
+import pygame
+import sys
+import numpy as np
+import random
+import math
+
+# Initialize Pygame
+pygame.init()
 
 # Screen settings
 WIDTH, HEIGHT = 1000, 700
@@ -142,7 +150,7 @@ def draw_curves(screen, price):
     # Draw title and labels
     screen.blit(font_title.render("供给与需求曲线", True, WHITE), (graph_x+graph_width//2-70, graph_y-25))
     screen.blit(font.render("价格 ($)", True, WHITE), (graph_x-20, graph_y+graph_height//2-70))
-    screen.blit(font.render("数量", True, WHITE), (graph_x+graph_width//2-20, graph_y+graph_height+15))
+    #screen.blit(font.render("数量", True, WHITE), (graph_x+graph_width//2-20, graph_y+graph_height+15))
     
     # 调整曲线绘制范围，避免超出边界
     demand_points = []
@@ -413,7 +421,7 @@ def draw_help_screen():
     
     # Calculate total height
     total_height = len(instructions) * 30
-    max_help_scroll = max(0, total_height - 500)  # 500 is available height
+    max_help_scroll = max(0, total_height - 500)  # 500是可用高度
     
     # Draw scrollable content
     y_pos = 120 + help_scroll
@@ -424,14 +432,20 @@ def draw_help_screen():
     
     # Draw scroll bar if needed
     if max_help_scroll > 0:
-        # Calculate scroll bar height and position
-        bar_height = 500 * 500 / total_height
-        bar_pos = 620 - (help_scroll / max_help_scroll) * (500 - bar_height)
+        # 修正1: 正确计算滚动条高度和位置
+        scroll_area_height = 500  # 滚动区域高度
+        scroll_bar_height = max(30, int(scroll_area_height * (scroll_area_height / total_height)))
+        scroll_ratio = -help_scroll / max_help_scroll
+        scroll_bar_y = 120 + int(scroll_ratio * (scroll_area_height - scroll_bar_height))
         
-        # Draw scroll track
-        pygame.draw.rect(screen, DARK_GRAY, (WIDTH//2 + 280, 120, 10, 500))
-        # Draw scroll bar
-        pygame.draw.rect(screen, ACCENT_COLOR, (WIDTH//2 + 280, bar_pos, 10, bar_height), border_radius=5)
+        # 修正2: 滚动条轨道位置与内容区域对齐
+        scroll_track_x = WIDTH//2 + 280
+        scroll_track_y = 120
+        
+        # 绘制滚动轨道
+        pygame.draw.rect(screen, DARK_GRAY, (scroll_track_x, scroll_track_y, 10, scroll_area_height))
+        # 绘制滚动条
+        pygame.draw.rect(screen, ACCENT_COLOR, (scroll_track_x, scroll_bar_y, 10, scroll_bar_height), border_radius=5)
     
     # Draw back button
     back_button = pygame.Rect(WIDTH//2 - 100, 650, 200, 40)
